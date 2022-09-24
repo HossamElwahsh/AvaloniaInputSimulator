@@ -15,6 +15,7 @@ Additions on this fork by [@HossamElwahsh](https://github.com/HossamElwahsh)
 - Added function `WhichWindow() : InPtr` to get current window hWnd handle
 - Added function `GetActiveWindowTitle() : string` to get current window title
 - Added function `GetActiveWindowTitle(IntPtr hWnd) : string` to get current window title of a given handle
+- Updated Net Framework to 4.8
 - 
 ```csharp
 public void MyProgram()
