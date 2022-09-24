@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using WindowsInput.Native;
 
 namespace WindowsInput
@@ -35,7 +36,7 @@ namespace WindowsInput
             Int16 result = NativeMethods.GetKeyState((UInt16)keyCode);
             return (result < 0);
         }
-
+        
         /// <summary>
         /// Determines whether the specified key is up or downby calling the <see cref="NativeMethods.GetKeyState"/> function. (See: http://msdn.microsoft.com/en-us/library/ms646301(VS.85).aspx)
         /// </summary>
@@ -60,6 +61,54 @@ namespace WindowsInput
         public bool IsKeyUp(VirtualKeyCode keyCode)
         {
             return !IsKeyDown(keyCode);
+        }
+
+        /// <summary>
+        /// Gets current foreground focused window handle
+        /// </summary>
+        /// <returns></returns>
+        public IntPtr? WhichWindow()
+        {
+            IntPtr? result = NativeMethods.GetForegroundWindow();
+            return (result);
+        }
+        
+        /// <summary>
+        /// gets windows title
+        /// </summary>
+        /// <returns></returns>
+        public string GetActiveWindowTitle()
+        {
+            IntPtr? hWnd = WhichWindow();
+            if (hWnd is null)
+            {
+                return "no window";
+            }
+
+            int bufSize = 100;
+            StringBuilder buffer = new StringBuilder(bufSize);
+            Int32 result = NativeMethods.GetWindowTextA((IntPtr)hWnd, buffer, bufSize);
+            // if (result) 
+            // {
+            return buffer.ToString();
+            // }                
+
+        }
+
+        /// <summary>
+        /// gets windows title for a specific hWnd IntPtr window handle
+        /// </summary>
+        /// <param name="hWnd"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public string GetActiveWindowTitle(IntPtr hWnd)
+        {
+            int bufSize = 100;
+            StringBuilder buffer = new StringBuilder(bufSize);
+            Int32 result = NativeMethods.GetWindowTextA((IntPtr)hWnd, buffer, bufSize);
+            // if (result) 
+            // {
+            return buffer.ToString();
         }
 
         /// <summary>

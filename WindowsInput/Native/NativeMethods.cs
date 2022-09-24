@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace WindowsInput.Native
 {
@@ -74,6 +75,14 @@ namespace WindowsInput.Native
         /// </remarks>
         [DllImport("user32.dll", SetLastError = true)]
         public static extern Int16 GetKeyState(UInt16 virtualKeyCode);
+
+        
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr GetForegroundWindow();
+        
+        
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern Int32 GetWindowTextA(IntPtr hWnd, StringBuilder lpString, Int32 nMaxCount);
 
         /// <summary>
         /// The SendInput function synthesizes keystrokes, mouse motions, and button clicks.

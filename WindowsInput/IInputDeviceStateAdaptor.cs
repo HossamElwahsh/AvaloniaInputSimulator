@@ -1,4 +1,5 @@
-﻿using WindowsInput.Native;
+﻿using System;
+using WindowsInput.Native;
 
 namespace WindowsInput
 {
@@ -25,6 +26,27 @@ namespace WindowsInput
         /// </returns>
         bool IsKeyUp(VirtualKeyCode keyCode);
 
+        /// <summary>
+        /// get current focus window hWnd Handle pointer
+        /// </summary>
+        /// <returns></returns>
+        public IntPtr? WhichWindow();
+
+
+        /// <summary>
+        /// gets windows title
+        /// </summary>
+        /// <returns></returns>
+        public string GetActiveWindowTitle();
+        
+        
+        /// <summary>
+        /// gets windows title
+        /// </summary>
+        /// <returns></returns>
+        public string GetActiveWindowTitle(IntPtr hWnd);
+
+        
         /// <summary>
         /// Determines whether the physical key is up or down at the time the function is called regardless of whether the application thread has read the keyboard event from the message pump.
         /// </summary>
