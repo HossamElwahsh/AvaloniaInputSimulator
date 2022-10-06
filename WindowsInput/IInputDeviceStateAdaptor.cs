@@ -39,8 +39,8 @@ namespace WindowsInput
         /// </summary>
         /// <returns></returns>
         public string GetActiveWindowTitle();
-        
-        
+
+
         /// <summary>
         /// Set Focus to given hWnd Pointer Handle
         /// </summary>
@@ -48,7 +48,7 @@ namespace WindowsInput
         /// <returns>
         /// - null: if focus failed <br/>
         /// - IntPtr: previous focused pointer if success </returns>
-        public IntPtr? SetFocus(IntPtr hWnd);
+        public bool SetFocus(IntPtr hWnd);
         
         /// <summary>
         /// gets windows title

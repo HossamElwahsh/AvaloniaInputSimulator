@@ -101,10 +101,9 @@ namespace WindowsInput
         /// <returns>
         /// - null: if focus failed <br/>
         /// - IntPtr: previous focused pointer if success </returns>
-        public IntPtr? SetFocus(IntPtr hWnd)
+        public bool SetFocus(IntPtr hWnd)
         {
-            NativeMethods.SetForegroundWindow(hWnd);
-            return WhichWindow();
+            return NativeMethods.SetForegroundWindow(hWnd);
         }
 
         /// <summary>
