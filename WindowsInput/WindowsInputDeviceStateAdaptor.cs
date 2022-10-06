@@ -69,8 +69,7 @@ namespace WindowsInput
         /// <returns></returns>
         public IntPtr? WhichWindow()
         {
-            IntPtr? result = NativeMethods.GetForegroundWindow();
-            return (result);
+            return NativeMethods.GetForegroundWindow();
         }
         
         /// <summary>
@@ -104,7 +103,8 @@ namespace WindowsInput
         /// - IntPtr: previous focused pointer if success </returns>
         public IntPtr? SetFocus(IntPtr hWnd)
         {
-            return NativeMethods.SetFocus(hWnd);
+            NativeMethods.SetForegroundWindow(hWnd);
+            return WhichWindow();
         }
 
         /// <summary>
