@@ -108,47 +108,110 @@ namespace WindowsInput
         }
 
         /// <summary>
-        /// gets windows process full file name
+        /// Retrieves the full name of the executable image for the specified process
         /// </summary>
-        /// <returns></returns>
-        public string GetActiveWindowFileName()
+        /// <param name="hWnd">A handle to the process. </param>
+        /// <returns>Window Exe Name.</returns>
+        public string GetWindowExeName(IntPtr hWnd)
+        {
+            int capacity = 1024;
+            StringBuilder sb = new StringBuilder(capacity);
+            var processId = GetProcessAndThreadId(hWnd)[1];
+            IntPtr handle = NativeMethods.OpenProcess((uint)ProcessAccessFlags.QueryLimitedInformation, 
+                false, (uint)processId);
+            NativeMethods.QueryFullProcessImageName(handle, 0, sb, ref capacity);
+            string fullPath = sb.ToString(0, capacity);
+            return fullPath;
+        }
+        /// <summary>
+        /// Retrieves the full name of the executable image for the active window process
+        /// </summary>
+        /// <returns>Window Exe Name.</returns>
+        public string GetActiveWindowExeName()
         {
             IntPtr? hWnd = WhichWindow();
             if (hWnd is null)
             {
                 return "no window";
             }
-
-            int bufSize = 200;
+         
+            int bufSize = 1024;
             StringBuilder buffer = new StringBuilder(bufSize);
-            
-            NativeMethods.GetWindowModuleFileNameA((IntPtr)hWnd, buffer, bufSize);
-            //StringBuilder result = NativeMethods.GetWindowModuleFileNameA((IntPtr)hWnd, buffer, bufSize);
-            // if (result) 
-            // {
-            return buffer.ToString();
-            // }                
+
+            NativeMethods.QueryFullProcessImageName((IntPtr)hWnd, 0, buffer, ref bufSize);
+            return buffer.ToString(0, bufSize);
+        }
+        
+        
+
+        /// <summary>
+        /// Get Active Win Data as <see cref="Win32Window"/> object
+        /// </summary>
+        /// <returns></returns>
+        public Win32Window GetActiveWindowData()
+        {
+            IntPtr? hWnd = WhichWindow();
+            if (hWnd is null)
+            {
+                return new Win32Window();
+            }
+            else
+            {
+                return GetWindowData((IntPtr)hWnd);
+            }
         }
         
         /// <summary>
-        /// gets windows process file name for a specific hWnd IntPtr window handle
+        ///  Get hWnd Win Data as <see cref="Win32Window"/> object
         /// </summary>
         /// <param name="hWnd"></param>
         /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public string GetActiveWindowFileName(IntPtr hWnd)
+        public Win32Window GetWindowData(IntPtr hWnd)
         {
-            int bufSize = 200;
-            StringBuilder buffer = new StringBuilder(bufSize);
+            var ids = GetProcessAndThreadId((IntPtr)hWnd);
+            IntPtr handle = NativeMethods.OpenProcess((uint)ProcessAccessFlags.QueryLimitedInformation,
+                false, (uint)ids[1]);
             
-            NativeMethods.GetWindowModuleFileNameA(hWnd, buffer, bufSize);
-            //StringBuilder result = NativeMethods.GetWindowModuleFileNameA((IntPtr)hWnd, buffer, bufSize);
-            // if (result) 
-            // {
-            return buffer.ToString();
-            // }                
+            int capacity = 1024;
+            StringBuilder sb = new StringBuilder(capacity);
+            NativeMethods.QueryFullProcessImageName(handle, 0, sb, ref capacity);
+            var win = new Win32Window()
+            {
+                hWnd = hWnd,
+                Retreived = true,
+                WindowName = GetActiveWindowTitle((IntPtr)hWnd),
+                ThreadId = ids[0],
+                ProcessId = ids[1],
+                ExePath = sb.ToString()
+            };
+            
+            return win;                
         }
 
+        private enum ProcessAccessFlags : uint
+        {
+            All = 0x001F0FFF,
+            Terminate = 0x00000001,
+            CreateThread = 0x00000002,
+            VirtualMemoryOperation = 0x00000008,
+            VirtualMemoryRead = 0x00000010,
+            VirtualMemoryWrite = 0x00000020,
+            DuplicateHandle = 0x00000040,
+            CreateProcess = 0x000000080,
+            SetQuota = 0x00000100,
+            SetInformation = 0x00000200,
+            QueryInformation = 0x00000400,
+            QueryLimitedInformation = 0x00001000,
+            Synchronize = 0x00100000
+        }
+        
+        private int[] GetProcessAndThreadId(IntPtr hWnd)
+        {
+            uint processId = 0;
+            uint threadId = NativeMethods.GetWindowThreadProcessId(hWnd, out processId);
+            return new[] {(int)threadId, (int)processId};
+        }
+        
         /// <summary>
         /// gets windows title for a specific hWnd IntPtr window handle
         /// </summary>

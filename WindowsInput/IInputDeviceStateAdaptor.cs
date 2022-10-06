@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using WindowsInput.Native;
 
 namespace WindowsInput
@@ -54,23 +55,34 @@ namespace WindowsInput
         /// </summary>
         /// <returns></returns>
         public string GetActiveWindowTitle(IntPtr hWnd);
+
+        /// <summary>
+        /// Retrieves the full name of the executable image for the specified process
+        /// </summary>
+        /// <param name="hWnd">A handle to the process. </param>
+        /// <returns>Window Exe Name : String</returns>
+        public string GetWindowExeName(IntPtr hWnd);
         
         
         /// <summary>
-        /// gets current focused window process file name
+        /// Retrieves the full name of the executable image for the specified process
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public string GetActiveWindowFileName();
+        /// <returns>Window Exe Name : String</returns>
+        public string GetActiveWindowExeName();
         
         
         /// <summary>
-        /// gets windows process file name for a specific hWnd IntPtr window handle
+        /// Retrieves the full name of the executable image for the specified process
         /// </summary>
-        /// <param name="hWnd"></param>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public string GetActiveWindowFileName(IntPtr hWnd);
+        /// <returns>Window Exe Name : String</returns>
+        public Win32Window GetActiveWindowData();
+        
+        /// <summary>
+        /// Retrieves the full name of the executable image for the specified process
+        /// </summary>
+        /// <returns>Window Exe Name : String</returns>
+        public Win32Window GetWindowData(IntPtr hWnd);
+        
 
         
         /// <summary>
