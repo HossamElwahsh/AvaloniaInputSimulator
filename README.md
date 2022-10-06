@@ -15,8 +15,10 @@ Additions on this fork by [@HossamElwahsh](https://github.com/HossamElwahsh)
 - Added function `WhichWindow() : InPtr` to get current window hWnd handle
 - Added function `GetActiveWindowTitle() : string` to get current window title
 - Added function `GetActiveWindowTitle(IntPtr hWnd) : string` to get current window title of a given handle
+- Added function `SetFocus(IntPtr hWnd) : IntPtr?` set focus to given hWnd Pointer Handle
+- Added function `GetActiveWindowFileName() : string` gets windows process full file name
+- Added function `GetActiveWindowFileName(IntPtr hWnd) : string` gets windows process file name for a specific hWnd IntPtr window handle
 - Updated Net Framework to 4.8
-- 
 ```csharp
 public void MyProgram()
 {
@@ -88,7 +90,8 @@ Example: Simulate text entry
 ```csharp
 public void SayHello()
 {
-  InputSimulator.SimulateTextEntry("Say hello!");
+  //InputSimulator.SimulateTextEntry("Say hello!");
+  new InputSimulator().Keyboard.TextEntry("Say hello!");
 }
 ```
 

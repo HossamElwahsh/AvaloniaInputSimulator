@@ -96,6 +96,60 @@ namespace WindowsInput
         }
 
         /// <summary>
+        /// Set Focus to given hWnd Pointer Handle
+        /// </summary>
+        /// <param name="hWnd">Window pointer handle to focus on</param>
+        /// <returns>
+        /// - null: if focus failed <br/>
+        /// - IntPtr: previous focused pointer if success </returns>
+        public IntPtr? SetFocus(IntPtr hWnd)
+        {
+            return NativeMethods.SetFocus(hWnd);
+        }
+
+        /// <summary>
+        /// gets windows process full file name
+        /// </summary>
+        /// <returns></returns>
+        public string GetActiveWindowFileName()
+        {
+            IntPtr? hWnd = WhichWindow();
+            if (hWnd is null)
+            {
+                return "no window";
+            }
+
+            int bufSize = 200;
+            StringBuilder buffer = new StringBuilder(bufSize);
+            
+            NativeMethods.GetWindowModuleFileNameA((IntPtr)hWnd, buffer, bufSize);
+            //StringBuilder result = NativeMethods.GetWindowModuleFileNameA((IntPtr)hWnd, buffer, bufSize);
+            // if (result) 
+            // {
+            return buffer.ToString();
+            // }                
+        }
+        
+        /// <summary>
+        /// gets windows process file name for a specific hWnd IntPtr window handle
+        /// </summary>
+        /// <param name="hWnd"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public string GetActiveWindowFileName(IntPtr hWnd)
+        {
+            int bufSize = 200;
+            StringBuilder buffer = new StringBuilder(bufSize);
+            
+            NativeMethods.GetWindowModuleFileNameA(hWnd, buffer, bufSize);
+            //StringBuilder result = NativeMethods.GetWindowModuleFileNameA((IntPtr)hWnd, buffer, bufSize);
+            // if (result) 
+            // {
+            return buffer.ToString();
+            // }                
+        }
+
+        /// <summary>
         /// gets windows title for a specific hWnd IntPtr window handle
         /// </summary>
         /// <param name="hWnd"></param>

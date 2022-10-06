@@ -41,10 +41,36 @@ namespace WindowsInput
         
         
         /// <summary>
+        /// Set Focus to given hWnd Pointer Handle
+        /// </summary>
+        /// <param name="hWnd">Window pointer handle to focus on</param>
+        /// <returns>
+        /// - null: if focus failed <br/>
+        /// - IntPtr: previous focused pointer if success </returns>
+        public IntPtr? SetFocus(IntPtr hWnd);
+        
+        /// <summary>
         /// gets windows title
         /// </summary>
         /// <returns></returns>
         public string GetActiveWindowTitle(IntPtr hWnd);
+        
+        
+        /// <summary>
+        /// gets current focused window process file name
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public string GetActiveWindowFileName();
+        
+        
+        /// <summary>
+        /// gets windows process file name for a specific hWnd IntPtr window handle
+        /// </summary>
+        /// <param name="hWnd"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public string GetActiveWindowFileName(IntPtr hWnd);
 
         
         /// <summary>

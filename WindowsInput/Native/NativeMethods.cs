@@ -84,6 +84,15 @@ namespace WindowsInput.Native
         [DllImport("user32.dll", SetLastError = true)]
         public static extern Int32 GetWindowTextA(IntPtr hWnd, StringBuilder lpString, Int32 nMaxCount);
 
+        
+        
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern StringBuilder GetWindowModuleFileNameA(IntPtr hWnd, StringBuilder lpString, Int32 nMaxCount);
+
+        
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr? SetFocus(IntPtr hWnd);
+
         /// <summary>
         /// The SendInput function synthesizes keystrokes, mouse motions, and button clicks.
         /// </summary>
