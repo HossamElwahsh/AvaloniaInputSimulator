@@ -189,53 +189,106 @@ namespace WindowsInput
         {
             UInt16 scanCode = character;
 
-            var down = new INPUT
-                           {
-                               Type = (UInt32)InputType.Keyboard,
-                               Data =
-                                   {
-                                       Keyboard =
-                                           new KEYBDINPUT
-                                               {
-                                                   KeyCode = 0,
-                                                   Scan = scanCode,
-                                                   Flags = (UInt32)KeyboardFlag.Unicode,
-                                                   Time = 0,
-                                                   ExtraInfo = IntPtr.Zero
-                                               }
-                                   }
-                           };
-
-            var up = new INPUT
-                         {
-                             Type = (UInt32)InputType.Keyboard,
-                             Data =
-                                 {
-                                     Keyboard =
-                                         new KEYBDINPUT
-                                             {
-                                                 KeyCode = 0,
-                                                 Scan = scanCode,
-                                                 Flags =
-                                                     (UInt32)(KeyboardFlag.KeyUp | KeyboardFlag.Unicode),
-                                                 Time = 0,
-                                                 ExtraInfo = IntPtr.Zero
-                                             }
-                                 }
-                         };
-
-            // Handle extended keys:
-            // If the scan code is preceded by a prefix byte that has the value 0xE0 (224),
-            // we need to include the KEYEVENTF_EXTENDEDKEY flag in the Flags property. 
-            if ((scanCode & 0xFF00) == 0xE000)
+            if (scanCode == 13)
             {
-                down.Data.Keyboard.Flags |= (UInt32)KeyboardFlag.ExtendedKey;
-                up.Data.Keyboard.Flags |= (UInt32)KeyboardFlag.ExtendedKey;
+                var down = new INPUT
+                {
+                    Type = (UInt32)InputType.Keyboard,
+                    Data =
+                    {
+                        Keyboard =
+                            new KEYBDINPUT
+                            {
+                                KeyCode = 0x0D,
+                                Scan = scanCode,
+                                // Flags = (UInt32)KeyboardFlag.Unicode,
+                                Flags = 0,
+                                Time = 0,
+                                ExtraInfo = IntPtr.Zero
+                            }
+                    }
+                };
+
+                var up = new INPUT
+                {
+                    Type = (UInt32)InputType.Keyboard,
+                    Data =
+                    {
+                        Keyboard =
+                            new KEYBDINPUT
+                            {
+                                KeyCode = 0x0D,
+                                Scan = scanCode,
+                                Flags = (UInt32)KeyboardFlag.KeyUp,
+                                    //(UInt32)(KeyboardFlag.KeyUp | KeyboardFlag.Unicode),
+                                Time = 0,
+                                ExtraInfo = IntPtr.Zero
+                            }
+                    }
+                };
+                // // Handle extended keys:
+                // // If the scan code is preceded by a prefix byte that has the value 0xE0 (224),
+                // // we need to include the KEYEVENTF_EXTENDEDKEY flag in the Flags property. 
+                // if ((scanCode & 0xFF00) == 0xE000)
+                // {
+                //     down.Data.Keyboard.Flags |= (UInt32)KeyboardFlag.ExtendedKey;
+                //     up.Data.Keyboard.Flags |= (UInt32)KeyboardFlag.ExtendedKey;
+                // }
+
+                _inputList.Add(down);
+                _inputList.Add(up);
+                return this;
+            }
+            else
+            {
+                var down = new INPUT
+                {
+                    Type = (UInt32)InputType.Keyboard,
+                    Data =
+                    {
+                        Keyboard =
+                            new KEYBDINPUT
+                            {
+                                KeyCode = 0,
+                                Scan = scanCode,
+                                Flags = (UInt32)KeyboardFlag.Unicode,
+                                Time = 0,
+                                ExtraInfo = IntPtr.Zero
+                            }
+                    }
+                };
+
+                var up = new INPUT
+                {
+                    Type = (UInt32)InputType.Keyboard,
+                    Data =
+                    {
+                        Keyboard =
+                            new KEYBDINPUT
+                            {
+                                KeyCode = 0,
+                                Scan = scanCode,
+                                Flags =
+                                    (UInt32)(KeyboardFlag.KeyUp | KeyboardFlag.Unicode),
+                                Time = 0,
+                                ExtraInfo = IntPtr.Zero
+                            }
+                    }
+                };
+                // Handle extended keys:
+                // If the scan code is preceded by a prefix byte that has the value 0xE0 (224),
+                // we need to include the KEYEVENTF_EXTENDEDKEY flag in the Flags property. 
+                if ((scanCode & 0xFF00) == 0xE000)
+                {
+                    down.Data.Keyboard.Flags |= (UInt32)KeyboardFlag.ExtendedKey;
+                    up.Data.Keyboard.Flags |= (UInt32)KeyboardFlag.ExtendedKey;
+                }
+
+                _inputList.Add(down);
+                _inputList.Add(up);
+                return this;
             }
 
-            _inputList.Add(down);
-            _inputList.Add(up);
-            return this;
         }
 
         /// <summary>

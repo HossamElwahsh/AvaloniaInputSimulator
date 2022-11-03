@@ -188,6 +188,7 @@ namespace WindowsInput
         /// <param name="text">The text to be simulated.</param>
         public IKeyboardSimulator TextEntry(string text)
         {
+            text = text.Replace("\r\n","\r").Replace("\n", "\r");
             if (text.Length > UInt32.MaxValue / 2) throw new ArgumentException(string.Format("The text parameter is too long. It must be less than {0} characters.", UInt32.MaxValue / 2), "text");
             var inputList = new InputBuilder().AddCharacters(text).ToArray();
             SendSimulatedInput(inputList);

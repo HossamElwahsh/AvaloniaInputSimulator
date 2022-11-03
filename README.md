@@ -20,6 +20,9 @@ Additions on this fork by [@HossamElwahsh](https://github.com/HossamElwahsh)
 - Added function `GetWindowExeName(IntPtr hWnd) : string` gets windows process file name for a specific hWnd IntPtr window handle
 - Added function `GetWindowData() : Win32Window` gets all data for current active window
 - Added function `GetWindowData(IntPtr hWnd) : Win32Window` gets all data for given hWnd window
+- -------
+Fixes
+- Fixed an issue with \r \n (new line characters) are not simulating new line in some apps like Notepad in Win11
 - Updated Net Framework to 4.8
 ```csharp
 public void MyProgram()
