@@ -189,6 +189,7 @@ namespace WindowsInput
         {
             UInt16 scanCode = character;
 
+            // which is (/r) line break character
             if (scanCode == 13)
             {
                 var down = new INPUT
@@ -199,10 +200,20 @@ namespace WindowsInput
                         Keyboard =
                             new KEYBDINPUT
                             {
-                                KeyCode = 0x0D,
-                                Scan = scanCode,
-                                // Flags = (UInt32)KeyboardFlag.Unicode,
-                                Flags = 0,
+                                // KeyCode = 13,
+                                // Scan = 13,
+                                
+                                // \r keycode
+                                KeyCode = 13,
+                                
+                                // keyboard scan code for enter key (RDP fix)
+                                // https://www.millisecond.com/support/docs/current/html/language/scancodes.htm
+                                Scan = 28,
+
+                                // KeyCode = 0,
+                                // Scan = 28,
+                                Flags = (UInt32)KeyboardFlag.Unicode,
+                                // Flags = 0,
                                 Time = 0,
                                 ExtraInfo = IntPtr.Zero
                             }
@@ -217,10 +228,16 @@ namespace WindowsInput
                         Keyboard =
                             new KEYBDINPUT
                             {
-                                KeyCode = 0x0D,
-                                Scan = scanCode,
-                                Flags = (UInt32)KeyboardFlag.KeyUp,
-                                    //(UInt32)(KeyboardFlag.KeyUp | KeyboardFlag.Unicode),
+                                // KeyCode = 0,
+                                // Scan = 28,
+                                
+                                // KeyCode = 13,
+                                // Scan = 13,
+                                
+                                KeyCode = 13,
+                                Scan = 28,
+                                 // Flags = (UInt32)KeyboardFlag.KeyUp,
+                                 Flags = (UInt32)(KeyboardFlag.KeyUp | KeyboardFlag.Unicode),
                                 Time = 0,
                                 ExtraInfo = IntPtr.Zero
                             }
