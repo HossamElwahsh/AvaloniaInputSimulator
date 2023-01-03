@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using WindowsInput.Native;
 
+
+// https://georezo.net/jparis/mb_r/dll/pages_user/virtual_key_codes.htm
 namespace WindowsInput
 {
     /// <summary>
@@ -178,6 +180,192 @@ namespace WindowsInput
             AddKeyDown(keyCode);
             AddKeyUp(keyCode);
             return this;
+        }
+
+        /// <summary>
+        /// Adds the character to the list of <see cref="INPUT"/> messages.
+        /// </summary>
+        /// <returns>This <see cref="InputBuilder"/> instance.</returns>
+        public InputBuilder PreparePasteCharacters()
+        {
+            // UInt16 scanCode = character;
+
+            // which is (/r) line break character
+            // if (scanCode == 13)
+            // {
+            
+            // https://georezo.net/jparis/mb_r/dll/pages_user/virtual_key_codes.htm
+            ushort ctrlKeyCode = 17; 
+            ushort ctrlScanCode = 29;
+            ushort vKeyCode = 'V';
+            ushort vScanCode = 47;//47;
+            
+            var ctrlDown = new INPUT
+            {
+                Type = (UInt32)InputType.Keyboard,
+                Data =
+                {
+                    Keyboard =
+                        new KEYBDINPUT
+                        {
+                            // KeyCode = 13,
+                            // Scan = 13,
+                            
+                            // Ctrl decimal keycode
+                            KeyCode = ctrlKeyCode,
+                            
+                            // keyboard scan code for enter key (RDP fix)
+                            // https://www.millisecond.com/support/docs/current/html/language/scancodes.htm
+                            Scan = ctrlScanCode, // CTRL
+
+                            // KeyCode = 0,
+                            // Scan = 28,
+                            Flags = (UInt32)KeyboardFlag.Unicode,
+                            // Flags = 0,
+                            Time = 0,
+                            ExtraInfo = IntPtr.Zero
+                        }
+                }
+            };
+
+            var ctrlUp = new INPUT
+            {
+                Type = (UInt32)InputType.Keyboard,
+                Data =
+                {
+                    Keyboard =
+                        new KEYBDINPUT
+                        {
+                            // KeyCode = 0,
+                            // Scan = 28,
+                            
+                            // KeyCode = 13,
+                            // Scan = 13,
+                            
+                            KeyCode = ctrlKeyCode,
+                            Scan = ctrlScanCode,
+                             // Flags = (UInt32)KeyboardFlag.KeyUp,
+                             Flags = (UInt32)(KeyboardFlag.KeyUp | KeyboardFlag.Unicode),
+                            Time = 0,
+                            ExtraInfo = IntPtr.Zero
+                        }
+                }
+            };
+            var vDown = new INPUT
+            {
+                Type = (UInt32)InputType.Keyboard,
+                Data =
+                {
+                    Keyboard =
+                        new KEYBDINPUT
+                        {
+                            // KeyCode = 13,
+                            // Scan = 13,
+                            
+                            // V decimal VK keycode
+                            KeyCode = vKeyCode,
+                            
+                            // keyboard scan code for enter key (RDP fix)
+                            // https://www.millisecond.com/support/docs/current/html/language/scancodes.htm
+                            Scan = vScanCode, // V
+
+                            // KeyCode = 0,
+                            // Scan = 28,
+                            Flags = (UInt32)KeyboardFlag.Unicode,
+                            // Flags = 0,
+                            Time = 0,
+                            ExtraInfo = IntPtr.Zero
+                        }
+                }
+            };
+
+            var vUp = new INPUT
+            {
+                Type = (UInt32)InputType.Keyboard,
+                Data =
+                {
+                    Keyboard =
+                        new KEYBDINPUT
+                        {
+                            // KeyCode = 0,
+                            // Scan = 28,
+                            
+                            // KeyCode = 13,
+                            // Scan = 13,
+                            
+                            KeyCode = vKeyCode,
+                            Scan = vScanCode,
+                             // Flags = (UInt32)KeyboardFlag.KeyUp,
+                             Flags = (UInt32)(KeyboardFlag.KeyUp | KeyboardFlag.Unicode),
+                            Time = 0,
+                            ExtraInfo = IntPtr.Zero
+                        }
+                }
+            };
+                // // Handle extended keys:
+                // // If the scan code is preceded by a prefix byte that has the value 0xE0 (224),
+                // // we need to include the KEYEVENTF_EXTENDEDKEY flag in the Flags property. 
+                // if ((scanCode & 0xFF00) == 0xE000)
+                // {
+                //     down.Data.Keyboard.Flags |= (UInt32)KeyboardFlag.ExtendedKey;
+                //     up.Data.Keyboard.Flags |= (UInt32)KeyboardFlag.ExtendedKey;
+                // }
+
+                _inputList.Add(ctrlDown);
+                _inputList.Add(vDown);
+                _inputList.Add(vUp);
+                _inputList.Add(ctrlUp);
+                return this;
+            // }
+            /*else
+            {
+                var down = new INPUT
+                {
+                    Type = (UInt32)InputType.Keyboard,
+                    Data =
+                    {
+                        Keyboard =
+                            new KEYBDINPUT
+                            {
+                                KeyCode = 0,
+                                Scan = scanCode,
+                                Flags = (UInt32)KeyboardFlag.Unicode,
+                                Time = 0,
+                                ExtraInfo = IntPtr.Zero
+                            }
+                    }
+                };
+
+                var up = new INPUT
+                {
+                    Type = (UInt32)InputType.Keyboard,
+                    Data =
+                    {
+                        Keyboard =
+                            new KEYBDINPUT
+                            {
+                                KeyCode = 0,
+                                Scan = scanCode,
+                                Flags =
+                                    (UInt32)(KeyboardFlag.KeyUp | KeyboardFlag.Unicode),
+                                Time = 0,
+                                ExtraInfo = IntPtr.Zero
+                            }
+                    }
+                };
+                // Handle extended keys:
+                // If the scan code is preceded by a prefix byte that has the value 0xE0 (224),
+                // we need to include the KEYEVENTF_EXTENDEDKEY flag in the Flags property. 
+                if ((scanCode & 0xFF00) == 0xE000)
+                {
+                    down.Data.Keyboard.Flags |= (UInt32)KeyboardFlag.ExtendedKey;
+                    up.Data.Keyboard.Flags |= (UInt32)KeyboardFlag.ExtendedKey;
+                }
+
+                _inputList.Add(down);
+                _inputList.Add(up);
+                return this;
+            }*/
         }
 
         /// <summary>
