@@ -193,6 +193,18 @@ namespace WindowsInput
         }
         
         /// <summary>
+        /// Calls the Win32 SendInput method with a stream of KeyDown and KeyUp messages in order to simulate paste CTRL+V via the keyboard.
+        /// With delay <param name="delay">delay in ms before clicking paste</param>
+        /// </summary>
+        public IKeyboardSimulator Paste(int delay)
+        {
+            var inputList = new InputBuilder().PreparePasteCharacters().ToArray();
+            Thread.Sleep(delay);
+            SendSimulatedInput(inputList);
+            return this;
+        }
+        
+        /// <summary>
         /// Calls the Win32 SendInput method with a stream of KeyDown and KeyUp messages in order to simulate uninterrupted text entry via the keyboard.
         /// </summary>
         /// <param name="text">The text to be simulated.</param>
