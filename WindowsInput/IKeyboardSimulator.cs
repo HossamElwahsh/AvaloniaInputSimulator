@@ -77,6 +77,11 @@ namespace WindowsInput
         IKeyboardSimulator Paste();
         
         /// <summary>
+        /// Simulates CTRL+V paste command via the keyboard with delay.
+        /// </summary>
+        IKeyboardSimulator Paste(int delay);
+        
+        /// <summary>
         /// Simulates uninterrupted text entry via the keyboard.
         /// </summary>
         /// <param name="text">The text to be simulated.</param>
