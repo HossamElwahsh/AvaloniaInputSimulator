@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows;
 
 namespace WindowsInput.Native
 {
@@ -241,6 +242,13 @@ namespace WindowsInput.Native
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool SetForegroundWindow(IntPtr hWnd);
         
+        // https://stackoverflow.com/questions/3413721/how-can-i-find-the-active-child-window
+        [DllImport("user32.dll")]
+        public static extern bool AttachThreadInput(UInt32 idAttach, Int32 idAttachTo, bool fAttach);
+        
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetFocus();
+        
         
         /// <summary>
         /// The SendInput function synthesizes keystrokes, mouse motions, and button clicks.
@@ -257,6 +265,32 @@ namespace WindowsInput.Native
         [DllImport("user32.dll", SetLastError = true)]
         public static extern UInt32 SendInput(UInt32 numberOfInputs, INPUT[] inputs, Int32 sizeOfInputStructure);
 
+
+        // [DllImport("User32.Dll", EntryPoint = "PostMessageA")]
+        // public static extern bool PostMessage(IntPtr hWnd, UInt32 msg, Int32 wParam, Int32 lParam);
+
+        [return: MarshalAs(UnmanagedType.Bool)]
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        public static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
+        // public static extern bool GetGUIThreadInfo(uint idThread, ref WindowsInputDeviceStateAdaptor.GUITHREADINFO lpgui);
+
+        [return: MarshalAs(UnmanagedType.Bool)]
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool PostThreadMessage(UInt32 threadId, uint msg, IntPtr wParam, IntPtr lParam);
+        
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool GetGUIThreadInfo(UInt32 idThread, ref WindowsInputDeviceStateAdaptor.GUITHREADINFO lpgui);
+
+        /// <summary>
+        /// USE Marshal.GetLastWin32Error() instead
+        /// error codes: https://learn.microsoft.com/en-us/windows/win32/debug/system-error-codes--0-499-
+        /// </summary>
+        /// <returns></returns>
+        [DllImport("kernel32.dll")]
+        public static extern UInt32 GetLastError();
+        
+        
         /// <summary>
         /// The GetMessageExtraInfo function retrieves the extra message information for the current thread. Extra message information is an application- or driver-defined value associated with the current thread's message queue. 
         /// </summary>

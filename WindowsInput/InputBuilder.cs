@@ -186,7 +186,7 @@ namespace WindowsInput
         /// Adds the character to the list of <see cref="INPUT"/> messages.
         /// </summary>
         /// <returns>This <see cref="InputBuilder"/> instance.</returns>
-        public InputBuilder PreparePasteCharacters()
+        public InputBuilder PreparePasteCharacters(KeyboardSimulator.PasteMode mode)
         {
             // UInt16 scanCode = character;
 
@@ -194,12 +194,27 @@ namespace WindowsInput
             // if (scanCode == 13)
             // {
             
+            // default codes for CTRL+V
             // https://georezo.net/jparis/mb_r/dll/pages_user/virtual_key_codes.htm
-            ushort ctrlKeyCode = 17; 
-            ushort ctrlScanCode = 29;
-            ushort vKeyCode = 'V';
-            ushort vScanCode = 47;//47;
+            ushort modifierKeyCode = 17;  // 0x11 VK_CTRL
+            ushort keyCode = 'V';         // 86 :uint
+
+            // https://www.millisecond.com/support/docs/current/html/language/scancodes.htm
+            ushort modifierKeyScanCode = 29;
+            ushort scanCode = 47;
             
+            if (mode == KeyboardSimulator.PasteMode.ShiftInsert)
+            {
+                // https://georezo.net/jparis/mb_r/dll/pages_user/virtual_key_codes.htm
+                modifierKeyCode = 16; // 0x10 | 16 VK_SHIFT
+                keyCode = 45;         // 0x2D - VK_Insert
+
+                // https://www.millisecond.com/support/docs/current/html/language/scancodes.htm
+                modifierKeyScanCode = 42; //42; // shift
+                scanCode = 82;            // Ins
+            }
+// win key code 96 0x60
+// bios key code 82 0x52
             var ctrlDown = new INPUT
             {
                 Type = (UInt32)InputType.Keyboard,
@@ -212,11 +227,11 @@ namespace WindowsInput
                             // Scan = 13,
                             
                             // Ctrl decimal keycode
-                            KeyCode = ctrlKeyCode,
+                            KeyCode = modifierKeyCode,
                             
                             // keyboard scan code for enter key (RDP fix)
                             // https://www.millisecond.com/support/docs/current/html/language/scancodes.htm
-                            Scan = ctrlScanCode, // CTRL
+                            Scan = modifierKeyScanCode, // CTRL
 
                             // KeyCode = 0,
                             // Scan = 28,
@@ -242,8 +257,8 @@ namespace WindowsInput
                             // KeyCode = 13,
                             // Scan = 13,
                             
-                            KeyCode = ctrlKeyCode,
-                            Scan = ctrlScanCode,
+                            KeyCode = modifierKeyCode,
+                            Scan = modifierKeyScanCode,
                              // Flags = (UInt32)KeyboardFlag.KeyUp,
                              Flags = (UInt32)(KeyboardFlag.KeyUp | KeyboardFlag.Unicode),
                             Time = 0,
@@ -263,15 +278,17 @@ namespace WindowsInput
                             // Scan = 13,
                             
                             // V decimal VK keycode
-                            KeyCode = vKeyCode,
+                            KeyCode = keyCode,
                             
                             // keyboard scan code for enter key (RDP fix)
                             // https://www.millisecond.com/support/docs/current/html/language/scancodes.htm
-                            Scan = vScanCode, // V
+                            Scan = scanCode, // V
 
                             // KeyCode = 0,
                             // Scan = 28,
-                            Flags = (UInt32)KeyboardFlag.Unicode,
+                            Flags = mode is KeyboardSimulator.PasteMode.ShiftInsert?
+                                (UInt32)KeyboardFlag.ExtendedKey:
+                                (UInt32)KeyboardFlag.Unicode,
                             // Flags = 0,
                             Time = 0,
                             ExtraInfo = IntPtr.Zero
@@ -293,10 +310,13 @@ namespace WindowsInput
                             // KeyCode = 13,
                             // Scan = 13,
                             
-                            KeyCode = vKeyCode,
-                            Scan = vScanCode,
+                            KeyCode = keyCode,
+                            Scan = scanCode,
                              // Flags = (UInt32)KeyboardFlag.KeyUp,
-                             Flags = (UInt32)(KeyboardFlag.KeyUp | KeyboardFlag.Unicode),
+                             // Flags = (UInt32)(KeyboardFlag.KeyUp | KeyboardFlag.Unicode),
+                             Flags = mode is KeyboardSimulator.PasteMode.ShiftInsert?
+                                 (UInt32)(KeyboardFlag.KeyUp | KeyboardFlag.ExtendedKey): // shft ins
+                                 (UInt32)(KeyboardFlag.KeyUp | KeyboardFlag.Unicode), //ctrl v
                             Time = 0,
                             ExtraInfo = IntPtr.Zero
                         }

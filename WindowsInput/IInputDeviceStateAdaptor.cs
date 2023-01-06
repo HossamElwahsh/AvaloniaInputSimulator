@@ -49,7 +49,15 @@ namespace WindowsInput
         /// - null: if focus failed <br/>
         /// - IntPtr: previous focused pointer if success </returns>
         public bool SetFocus(IntPtr hWnd);
+
         
+        /// <summary>
+        /// Get GUI thread info
+        /// </summary>
+        /// <param name="threadId">thread ID</param>
+        /// <returns></returns>
+        public WindowsInputDeviceStateAdaptor.GUITHREADINFO GetGuiThreadInfo(UInt32 threadId);
+
         /// <summary>
         /// gets windows title
         /// </summary>

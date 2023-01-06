@@ -33,11 +33,11 @@ namespace WindowsInput
         /// <summary>
         /// Process ID AKA PID in windows task manager
         /// </summary>
-        public int ProcessId { get; set; }
+        public UInt32 ProcessId { get; set; }
         /// <summary>
         /// Current Thread ID
         /// </summary>
-        public int ThreadId { get; set; }
+        public UInt32 ThreadId { get; set; }
         /// <summary>
         /// true if this model is initiated with data
         /// </summary>

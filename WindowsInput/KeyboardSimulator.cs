@@ -183,24 +183,67 @@ namespace WindowsInput
         }
 
         /// <summary>
-        /// Calls the Win32 SendInput method with a stream of KeyDown and KeyUp messages in order to simulate paste CTRL+V via the keyboard.
+        /// Pasting modes
         /// </summary>
-        public IKeyboardSimulator Paste()
+        public enum PasteMode
         {
-            var inputList = new InputBuilder().PreparePasteCharacters().ToArray();
+            /// <summary>
+            /// Simulate Ctrl+V
+            /// </summary>
+            CtrlV = 1,
+            
+            /// <summary>
+            /// Simulate Shift+Ins
+            /// </summary>
+            ShiftInsert = 2
+        }
+        
+        /// <summary>
+        /// Calls the Win32 SendInput method with a stream of KeyDown and KeyUp messages in order to simulate paste CTRL+V via the keyboard.
+        /// <param name="mode">1: Ctrl+V | 2: Insert+Shift</param>
+        /// </summary>
+        public IKeyboardSimulator Paste(PasteMode mode)
+        {
+            var inputList = new InputBuilder().PreparePasteCharacters(mode).ToArray();
             SendSimulatedInput(inputList);
             return this;
         }
         
         /// <summary>
         /// Calls the Win32 SendInput method with a stream of KeyDown and KeyUp messages in order to simulate paste CTRL+V via the keyboard.
+        /// <param name="mode">1: Ctrl+V | 2: Insert+Shift</param>
         /// With delay <param name="delay">delay in ms before clicking paste</param>
         /// </summary>
-        public IKeyboardSimulator Paste(int delay)
+        public IKeyboardSimulator Paste(PasteMode mode, int delay)
         {
-            var inputList = new InputBuilder().PreparePasteCharacters().ToArray();
+            var inputList = new InputBuilder().PreparePasteCharacters(mode).ToArray();
             Thread.Sleep(delay);
             SendSimulatedInput(inputList);
+            return this;
+        }
+        
+        
+        /// <summary>
+        /// Calls the Win32 PostMessageA method with a msg 0x0302 WM_PASTE
+        /// </summary>
+        public IKeyboardSimulator PasteLowLevel(IntPtr hWnd)
+        {
+            // NativeMethods.PostMessage(hWnd, 0x0302, 0, 0);
+            var result = NativeMethods.PostMessage(hWnd, 0x0302, IntPtr.Zero, IntPtr.Zero);
+            Console.WriteLine("Post message WM_PASTE result: " + result);
+            return this;
+        }
+        
+        /// <summary>
+        /// Calls the Win32 PostMessageA method with a msg 0x0302 WM_PASTE with delay
+        /// With delay <param name="delay">delay in ms before clicking paste</param>
+        /// </summary>
+        public IKeyboardSimulator PasteLowLevel(IntPtr hWnd, int delay)
+        {
+            Thread.Sleep(delay);
+            // NativeMethods.PostMessage(hWnd, 0x0302, 0, 0);
+            var result = NativeMethods.PostMessage(hWnd, 0x0302, IntPtr.Zero, IntPtr.Zero);
+            Console.WriteLine("Post message WM_PASTE result: " + result);
             return this;
         }
         

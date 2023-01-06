@@ -74,12 +74,22 @@ namespace WindowsInput
         /// <summary>
         /// Simulates CTRL+V paste command via the keyboard.
         /// </summary>
-        IKeyboardSimulator Paste();
+        IKeyboardSimulator Paste(KeyboardSimulator.PasteMode mode);
         
         /// <summary>
         /// Simulates CTRL+V paste command via the keyboard with delay.
         /// </summary>
-        IKeyboardSimulator Paste(int delay);
+        IKeyboardSimulator Paste(KeyboardSimulator.PasteMode mode, int delay);
+        
+        /// <summary>
+        /// Sends low level WM_PASTE message to an hWnd window pointer
+        /// </summary>
+        IKeyboardSimulator PasteLowLevel(IntPtr hWnd);
+        
+        /// <summary>
+        /// Sends low level WM_PASTE message to an hWnd window pointer with delay
+        /// </summary>
+        IKeyboardSimulator PasteLowLevel(IntPtr hWnd, int delay);
         
         /// <summary>
         /// Simulates uninterrupted text entry via the keyboard.

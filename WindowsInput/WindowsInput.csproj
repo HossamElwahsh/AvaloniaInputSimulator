@@ -51,6 +51,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IInputSimulator.cs" />
@@ -72,6 +73,7 @@
     <Compile Include="Native\MouseFlag.cs" />
     <Compile Include="Native\MOUSEINPUT.cs" />
     <Compile Include="Native\MOUSEKEYBDHARDWAREINPUT.cs" />
+    <Compile Include="testRun.cs" />
     <Compile Include="Win32Window.cs" />
     <Compile Include="WindowsInputDeviceStateAdaptor.cs" />
     <Compile Include="WindowsInputMessageDispatcher.cs" />

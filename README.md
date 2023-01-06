@@ -12,8 +12,8 @@ Custom Fork of [michaelnoonan/inputsimulator](https://github.com/michaelnoonan/i
 
 Additions on this fork by [@HossamElwahsh](https://github.com/HossamElwahsh)
 ==================
-- Added function `Paste()` simulates CTRL+V press, useful in RDP situations
-- Added function `Paste(int delay)` simulates CTRL+V press, useful in RDP situations with delay in ms
+- Added function `Paste(PasteMode mode)` simulates CTRL+V/Insert+Shift press, useful in RDP situations
+- Added function `Paste(PasteMode mode, int delay)` simulates CTRL+V/Insert+Shift press, useful in RDP situations with delay in ms
 - Added function `WhichWindow() : InPtr` to get current window hWnd handle
 - Added function `GetActiveWindowTitle() : string` to get current window title
 - Added function `GetActiveWindowTitle(IntPtr hWnd) : string` to get current window title of a given handle

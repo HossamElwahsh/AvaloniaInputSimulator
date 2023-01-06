@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
+using System.Windows;
 using WindowsInput.Native;
 
 namespace WindowsInput
 {
     /// <summary>
-    /// An implementation of <see cref="IInputDeviceStateAdaptor"/> for Windows by calling the native <see cref="NativeMethods.GetKeyState"/> and <see cref="NativeMethods.GetAsyncKeyState"/> methods.
+    /// An implementation of <see cref="IInputDeviceStateAdaptor"/> for Windows by calling the native <see cref="Native.NativeMethods.GetKeyState"/> and <see cref="Native.NativeMethods.GetAsyncKeyState"/> methods.
     /// </summary>
     public class WindowsInputDeviceStateAdaptor : IInputDeviceStateAdaptor
     {
@@ -38,7 +42,7 @@ namespace WindowsInput
         }
         
         /// <summary>
-        /// Determines whether the specified key is up or downby calling the <see cref="NativeMethods.GetKeyState"/> function. (See: http://msdn.microsoft.com/en-us/library/ms646301(VS.85).aspx)
+        /// Determines whether the specified key is up or downby calling the <see cref="Native.NativeMethods.GetKeyState"/> function. (See: http://msdn.microsoft.com/en-us/library/ms646301(VS.85).aspx)
         /// </summary>
         /// <param name="keyCode">The <see cref="VirtualKeyCode"/> for the key.</param>
         /// <returns>
@@ -106,6 +110,91 @@ namespace WindowsInput
             return NativeMethods.SetForegroundWindow(hWnd);
         }
 
+        /// <summary>
+        /// Get GUI thread info
+        /// </summary>
+        /// <param name="threadId">thread ID</param>
+        /// <returns></returns>
+        public GUITHREADINFO GetGuiThreadInfo(UInt32 threadId)
+        {
+            var result = new GUITHREADINFO();
+            result.cbSize = Marshal.SizeOf(result);
+            var pass = NativeMethods.GetGUIThreadInfo(threadId, ref result);
+            if (!pass)
+            {
+                Console.WriteLine("Error Code: " + Marshal.GetLastWin32Error());
+            }
+            Console.WriteLine("getGUI success/fail: " + pass);
+            Console.WriteLine("hWnd Focus (decimal): " + result.hwndFocus);
+            Console.WriteLine("hWnd Caret (decimal): " + result.hwndCaret);
+            Console.WriteLine("GUI flag: " + result.flags);
+            Console.WriteLine($"GUI caret selection (RECT): {result.rcCaret.iRight-result.rcCaret.iLeft}w, " +
+                              $"{result.rcCaret.iBottom-result.rcCaret.iTop}h");
+            
+            uint processId = 0;
+            var focusedThreadId = NativeMethods.GetWindowThreadProcessId(result.hwndFocus, out processId);
+            Console.WriteLine("-------------------");
+            Console.WriteLine($"Focused thread data: Process ID: {processId} | Thread ID: {focusedThreadId}");
+            Console.WriteLine("-------------------");
+
+            // var myId = Thread.CurrentThread.ManagedThreadId;
+            // Console.WriteLine("my thread ID: "+ myId);
+            // //AttachTrheadInput is needed so we can get the handle of a focused window in another app
+            // NativeMethods.AttachThreadInput(focusedThreadId, myId, true);
+            // //Get the handle of a focused window
+            // var focused = NativeMethods.GetFocus();
+            // Console.WriteLine("Focus hwnd workaround: " + focused);
+            // //Now detach since we got the focused handle
+            // NativeMethods.AttachThreadInput(focusedThreadId, myId, false);
+            // var thmsg = NativeMethods.PostThreadMessage(focusedThreadId, 0x0302, IntPtr.Zero, IntPtr.Zero);
+            // var thmsg2 = NativeMethods.PostThreadMessage(threadId, 0x0302, IntPtr.Zero, IntPtr.Zero);
+            // Console.WriteLine("thmsg: " +thmsg);
+            // Console.WriteLine("thmsg2: " +thmsg);
+            // if (!thmsg || !thmsg2)
+            // {
+            //     Console.WriteLine("Error Code: " + Marshal.GetLastWin32Error());
+            // }
+            
+            return result;
+        }
+        
+        [Flags]
+        public enum GuiThreadInfoFlags
+        {
+            GUI_CARETBLINKING = 0x00000001,
+            GUI_INMENUMODE = 0x00000004,
+            GUI_INMOVESIZE = 0x00000002,
+            GUI_POPUPMENUMODE = 0x00000010,
+            GUI_SYSTEMMENUMODE = 0x00000008
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct GUITHREADINFO
+        {
+            // public Int32 cbSize;
+            public int cbSize;
+            public GuiThreadInfoFlags flags;
+            // public UInt32 flags;
+            // public GuiThreadInfoFlags flags;
+            public IntPtr hwndActive;
+            public IntPtr hwndFocus;
+            public IntPtr hwndCapture;
+            public IntPtr hwndMenuOwner;
+            public IntPtr hwndMoveSize;
+            public IntPtr hwndCaret;
+            // public Rect rcCaret;
+            public RECT rcCaret;
+        }
+        
+        [StructLayout(LayoutKind.Sequential)]
+        public struct RECT
+        {
+            public int iLeft;
+            public int iTop;
+            public int iRight;
+            public int iBottom;
+        }
+        
         /// <summary>
         /// Retrieves the full name of the executable image for the specified process
         /// </summary>
@@ -204,11 +293,11 @@ namespace WindowsInput
             Synchronize = 0x00100000
         }
         
-        private int[] GetProcessAndThreadId(IntPtr hWnd)
+        private UInt32[] GetProcessAndThreadId(IntPtr hWnd)
         {
             uint processId = 0;
             uint threadId = NativeMethods.GetWindowThreadProcessId(hWnd, out processId);
-            return new[] {(int)threadId, (int)processId};
+            return new[] {threadId, processId};
         }
         
         /// <summary>
@@ -228,7 +317,7 @@ namespace WindowsInput
         }
 
         /// <summary>
-        /// Determines whether the physical key is up or down at the time the function is called regardless of whether the application thread has read the keyboard event from the message pump by calling the <see cref="NativeMethods.GetAsyncKeyState"/> function. (See: http://msdn.microsoft.com/en-us/library/ms646293(VS.85).aspx)
+        /// Determines whether the physical key is up or down at the time the function is called regardless of whether the application thread has read the keyboard event from the message pump by calling the <see cref="Native.NativeMethods.GetAsyncKeyState"/> function. (See: http://msdn.microsoft.com/en-us/library/ms646293(VS.85).aspx)
         /// </summary>
         /// <param name="keyCode">The <see cref="VirtualKeyCode"/> for the key.</param>
         /// <returns>
@@ -261,7 +350,7 @@ namespace WindowsInput
         }
 
         /// <summary>
-        /// Determines whether the physical key is up or down at the time the function is called regardless of whether the application thread has read the keyboard event from the message pump by calling the <see cref="NativeMethods.GetAsyncKeyState"/> function. (See: http://msdn.microsoft.com/en-us/library/ms646293(VS.85).aspx)
+        /// Determines whether the physical key is up or down at the time the function is called regardless of whether the application thread has read the keyboard event from the message pump by calling the <see cref="Native.NativeMethods.GetAsyncKeyState"/> function. (See: http://msdn.microsoft.com/en-us/library/ms646293(VS.85).aspx)
         /// </summary>
         /// <param name="keyCode">The <see cref="VirtualKeyCode"/> for the key.</param>
         /// <returns>
@@ -293,7 +382,7 @@ namespace WindowsInput
         }
 
         /// <summary>
-        /// Determines whether the toggling key is toggled on (in-effect) or not by calling the <see cref="NativeMethods.GetKeyState"/> function.  (See: http://msdn.microsoft.com/en-us/library/ms646301(VS.85).aspx)
+        /// Determines whether the toggling key is toggled on (in-effect) or not by calling the <see cref="Native.NativeMethods.GetKeyState"/> function.  (See: http://msdn.microsoft.com/en-us/library/ms646301(VS.85).aspx)
         /// </summary>
         /// <param name="keyCode">The <see cref="VirtualKeyCode"/> for the key.</param>
         /// <returns>
