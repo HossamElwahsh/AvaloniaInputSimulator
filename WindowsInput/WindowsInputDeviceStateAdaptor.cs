@@ -158,40 +158,103 @@ namespace WindowsInput
             return result;
         }
         
+        /// <summary>
+        /// GUI Thread Info Flags
+        /// </summary>
         [Flags]
         public enum GuiThreadInfoFlags
         {
+            /// <summary>
+            /// Caret blinking
+            /// </summary>
             GUI_CARETBLINKING = 0x00000001,
+            /// <summary>
+            /// In menu mode
+            /// </summary>
             GUI_INMENUMODE = 0x00000004,
+            /// <summary>
+            /// In move size
+            /// </summary>
             GUI_INMOVESIZE = 0x00000002,
+            /// <summary>
+            /// Popup menu mode
+            /// </summary>
             GUI_POPUPMENUMODE = 0x00000010,
+            /// <summary>
+            /// System menu mode
+            /// </summary>
             GUI_SYSTEMMENUMODE = 0x00000008
         }
 
+        /// <summary>
+        /// Gui thread info
+        /// </summary>
         [StructLayout(LayoutKind.Sequential)]
         public struct GUITHREADINFO
         {
             // public Int32 cbSize;
+            /// <summary>
+            /// Cb Size
+            /// </summary>
             public int cbSize;
+            /// <summary>
+            /// GUI Thread info flags
+            /// </summary>
             public GuiThreadInfoFlags flags;
             // public UInt32 flags;
             // public GuiThreadInfoFlags flags;
+            /// <summary>
+            /// window active hwd
+            /// </summary>
             public IntPtr hwndActive;
+            /// <summary>
+            /// Window focus hwd
+            /// </summary>
             public IntPtr hwndFocus;
+            /// <summary>
+            /// window capture hwd
+            /// </summary>
             public IntPtr hwndCapture;
+            /// <summary>
+            /// menu owner hwd
+            /// </summary>
             public IntPtr hwndMenuOwner;
+            /// <summary>
+            /// move size hwd
+            /// </summary>
             public IntPtr hwndMoveSize;
+            /// <summary>
+            /// caret hwd
+            /// </summary>
             public IntPtr hwndCaret;
             // public Rect rcCaret;
+            /// <summary>
+            /// caret RC
+            /// </summary>
             public RECT rcCaret;
         }
         
+        /// <summary>
+        /// Rectangle coordinates
+        /// </summary>
         [StructLayout(LayoutKind.Sequential)]
         public struct RECT
         {
+            /// <summary>
+            /// Left
+            /// </summary>
             public int iLeft;
+            /// <summary>
+            /// Top
+            /// </summary>
             public int iTop;
+            /// <summary>
+            /// Right
+            /// </summary>
             public int iRight;
+            /// <summary>
+            /// Bottom
+            /// </summary>
             public int iBottom;
         }
         
@@ -305,7 +368,6 @@ namespace WindowsInput
         /// </summary>
         /// <param name="hWnd"></param>
         /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
         public string GetActiveWindowTitle(IntPtr hWnd)
         {
             int bufSize = 100;

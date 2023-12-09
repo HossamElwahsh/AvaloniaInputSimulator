@@ -237,6 +237,7 @@ namespace WindowsInput
         /// <summary>
         /// Calls the Win32 PostMessageA method with a msg 0x0302 WM_PASTE with delay
         /// With delay <param name="delay">delay in ms before clicking paste</param>
+        /// <param name="hWnd">window handle</param>
         /// </summary>
         public IKeyboardSimulator PasteLowLevel(IntPtr hWnd, int delay)
         {
